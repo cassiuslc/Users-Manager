@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-/**
- * @OA\Info(title="Users Manager API", version="0.1")
- */
-abstract class Controller
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
+
+class Controller extends BaseController
 {
-    //
+    use AuthorizesRequests, ValidatesRequests;
 }
