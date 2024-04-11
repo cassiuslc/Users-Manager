@@ -17,9 +17,7 @@
           <MenuItem to="/deletar" label="Deletar" />
           <MenuItem to="/listar" label="Listar" />
           <MenuItem to="/pesquisar" label="Pesquisar" />
-          <a href="/swagger" target="_blank" class="block mt-4 lg:inline-block lg:mt-0 text-gray-200 hover:text-white">
-            Swagger
-          </a>
+          <MenuItem to="/swagger" label="Swagger" />
         </div>
       </div>
     </nav>
