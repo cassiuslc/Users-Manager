@@ -7,8 +7,6 @@ use App\Models\User;
 use App\Http\Requests\StoreRequest;
 use App\Http\Requests\UpdateRequest;
 use App\Http\Requests\IndexRequest;
-use App\Http\Requests\DestroyRequest;
-use App\Http\Requests\ShowRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 
