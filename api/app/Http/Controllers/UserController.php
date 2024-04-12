@@ -31,6 +31,7 @@ class UserController extends Controller
      * @OA\Post(
      *     path="/api/users",
      *     tags={"Users"},
+     *     security={{"bearerAuth": {}}},
      *     summary="Store a newly created user",
      *     description="Store a newly created user in the storage.",
      *     @OA\RequestBody(
@@ -70,6 +71,7 @@ class UserController extends Controller
      * @OA\Get(
      *     path="/api/users",
      *     tags={"Users"},
+     *     security={{"bearerAuth": {}}},
      *     summary="Display all users",
      *     description="Display all users.",
      *     @OA\Parameter(
@@ -99,6 +101,7 @@ class UserController extends Controller
      * @OA\Get(
      *     path="/api/users/{id}",
      *     tags={"Users"},
+     *     security={{"bearerAuth": {}}},
      *     summary="Display the specified user",
      *     description="Display the specified user by ID.",
      *     @OA\Parameter(
@@ -129,6 +132,7 @@ class UserController extends Controller
      *     path="/api/users/{id}",
      *     tags={"Users"},
      *     summary="Update the specified user",
+     *     security={{"bearerAuth": {}}},
      *     description="Update the specified user by ID.",
      *     @OA\Parameter(
      *         name="id",
@@ -173,6 +177,7 @@ class UserController extends Controller
      *     path="/api/users/{id}",
      *     tags={"Users"},
      *     summary="Remove the specified user",
+     *     security={{"bearerAuth": {}}},
      *     description="Remove the specified user by ID.",
      *     @OA\Parameter(
      *         name="id",
