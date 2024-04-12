@@ -26,6 +26,7 @@ Um exemplo simples de formulário em uma caixa de diálogo.
             <v-col cols="12" md="12" sm="12">
               <v-text-field
                 label="Nome Completo*"
+                 :error="showError.includes('name')"
                 :disabled="submit"
                 clearable 
                 v-model="data_local.name"
@@ -40,8 +41,9 @@ Um exemplo simples de formulário em uma caixa de diálogo.
             >
                <v-text-field
                 label="CPF*"
+                :error="showError.includes('cpf')"
                 :disabled="submit"
-                clearable 
+                v-mask="'###.###.###-##'"
                 v-model="data_local.cpf"
                 type="text"
                 required
@@ -54,7 +56,8 @@ Um exemplo simples de formulário em uma caixa de diálogo.
               sm="6"
             >
               <v-text-field
-                label="Senha*"
+                label="Senha"
+                :error="showError.includes('password')"
                 :disabled="submit"
                 clearable 
                 v-model="data_local.password"
@@ -69,7 +72,8 @@ Um exemplo simples de formulário em uma caixa de diálogo.
               sm="6"
             >
               <v-text-field
-                label="Confirma Senha*"
+                label="Confirma Senha"
+                :error="showError.includes('confirmPassword')"
                 :disabled="submit"
                 clearable 
                 v-model="data_local.confirmPassword"
@@ -85,6 +89,7 @@ Um exemplo simples de formulário em uma caixa de diálogo.
             >
             <v-text-field
                 label="Email*"
+                :error="showError.includes('email')"
                 :disabled="submit"
                 clearable 
                 v-model="data_local.email"
@@ -138,6 +143,7 @@ Um exemplo simples de formulário em uma caixa de diálogo.
         dialog: false,
         loading: false,
         submit: false,
+        showError : [],
         data_local: {
             user: 0,
             name: "",
@@ -166,6 +172,7 @@ Um exemplo simples de formulário em uma caixa de diálogo.
         email: "",
         password: "",
         confirmPassword: "",
+        showError : [],
         };
     },
     fetchUserData() {
@@ -188,9 +195,26 @@ Um exemplo simples de formulário em uma caixa de diálogo.
         this.loading = false;
         });
     },
+    handleErrors(error) {
+        this.showError = []; // Limpa o array showError antes de adicionar novos erros
+
+        if (error.response && error.response.data && error.response.data.errors) {
+            const errors = error.response.data.errors;
+
+            // Percorre os campos de erro para extrair seus nomes
+            for (let field in errors) {
+                this.showError.push(field);
+            }
+        }
+    },
     updateItem() {
       this.submit = true;
+      let dataToSend = { ...this.data_local };
 
+      // Remove a senha se estiver vazia ou indefinida
+      if (dataToSend.password === "" || dataToSend.password === undefined) {
+          delete dataToSend.password;
+      }
       axios.put(`http://localhost/api/users/${this.id}`, this.data_local)
         .then(response => {
           if (response.status === 200) {
@@ -207,6 +231,7 @@ Um exemplo simples de formulário em uma caixa de diálogo.
         .catch(error => {
           if (error.response && error.response.data && error.response.data.message) {
             let errorMessage = error.response.data.message;
+            this.handleErrors(error);
             this.toast.error(errorMessage, { timeout: 4000 });
             console.error('Erro ao editar item:', errorMessage);
           } else {
