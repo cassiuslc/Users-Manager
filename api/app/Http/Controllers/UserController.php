@@ -88,13 +88,26 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function index(IndexRequest $request): JsonResponse
+    public function index(Request $request)
     {
         $perPage = $request->query('perPage', 10);
         $page = $request->query('page', 1);
-
-        $users = User::paginate($perPage, ['*'], 'page', $page);
         
+        $sortBy = $request->query('sortBy');
+        $sortOrder = $request->query('sortOrder');
+
+        // Inicializa a query de usuários
+        $query = User::query();
+
+        // Aplica a ordenação, se fornecida
+        if ($sortBy && $sortOrder) {
+            $query->orderBy($sortBy, $sortOrder);
+        }
+
+        // Obtém os usuários paginados
+        $users = $query->paginate($perPage, ['*'], 'page', $page);
+
+        // Retorna a resposta JSON com os usuários paginados
         return response()->json(['users' => $users], 200);
     }
 
