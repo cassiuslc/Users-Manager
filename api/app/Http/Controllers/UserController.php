@@ -92,9 +92,9 @@ class UserController extends Controller
     {
         $perPage = $request->query('perPage', 10);
         $page = $request->query('page', 1);
-        
-        $sortBy = $request->query('sortBy');
-        $sortOrder = $request->query('sortOrder');
+
+        $sortBy = $request->query('sortBy','updated_at');
+        $sortOrder = $request->query('sortOrder','desc');
 
         // Inicializa a query de usuários
         $query = User::query();
