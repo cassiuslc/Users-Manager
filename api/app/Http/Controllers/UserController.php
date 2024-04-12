@@ -93,7 +93,10 @@ class UserController extends Controller
     public function index(IndexRequest $request): JsonResponse
     {
         $perPage = $request->query('perPage', 10);
-        $users = User::paginate($perPage);
+        $page = $request->query('page', 1);
+
+        $users = User::paginate($perPage, ['*'], 'page', $page);
+        
         return response()->json(['users' => $users], 200);
     }
 
@@ -120,9 +123,12 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function show(ShowRequest $request): JsonResponse
+    public function show($id): JsonResponse
     {
-        $id = $request->query('id');
+        Validator::make(["id" => $id], [
+            'id' => 'required|integer|exists:users,id'
+        ])->validate();
+
         $user = User::findOrFail($id);
         return response()->json(['user' => $user], 200);
     }
@@ -160,9 +166,12 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function update(UpdateRequest $request): JsonResponse
+    public function update(UpdateRequest $request, $id): JsonResponse
     {
-        $id = $request->query('id');
+        Validator::make(["id" => $id], [
+            'id' => 'required|integer|exists:users,id'
+        ])->validate();
+
         $user = User::findOrFail($id);
 
         $validatedData = $request->validated();
@@ -195,9 +204,12 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function destroy(DestroyRequest $request): JsonResponse
+    public function destroy($id): JsonResponse
     {
-        $id = $request->query('id');
+        Validator::make(["id" => $id], [
+            'id' => 'required|integer|exists:users,id'
+        ])->validate();
+
         $user = User::findOrFail($id);
 
         $user->delete();

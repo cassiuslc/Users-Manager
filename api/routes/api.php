@@ -33,5 +33,9 @@ Route::group([
     //'middleware' => 'auth:api',
     'prefix' => 'users'
 ], function ($router) {
-    Route::post('create', [UserController::class, 'store'])->name('user.create');
+    Route::post('/', [UserController::class, 'store'])->name('user.create');
+    Route::get('/', [UserController::class, 'index'])->name('user.index');
+    Route::get('/{id}', [UserController::class, 'show'])->name('user.show');
+    Route::put('/{id}', [UserController::class, 'update'])->name('user.update');
+    Route::delete('/{id}', [UserController::class, 'destroy'])->name('user.destroy');
 });

@@ -17,6 +17,7 @@ class IndexRequest extends FormRequest
     {
         return [
             'perPage' => 'integer|min:1|max:100',
+            'page' => 'integer|min:1|max:100',
         ];
     }
 
@@ -26,6 +27,9 @@ class IndexRequest extends FormRequest
             'perPage.integer' => 'O valor de "perPage" deve ser um número inteiro.',
             'perPage.min' => 'O valor de "perPage" deve ser no mínimo :min.',
             'perPage.max' => 'O valor de "perPage" deve ser no máximo :max.',
+            'page.integer' => 'O valor de "page" deve ser um número inteiro.',
+            'page.min' => 'O valor de "page" deve ser no mínimo :min.',
+            'page.max' => 'O valor de "page" deve ser no máximo :max.',
         ];
     }
 }
