@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\CPF;
+use App\Rules\PasswordStrengthRule;
 /**
  * @OA\Ignore
  */
@@ -15,11 +17,15 @@ class UpdateRequest extends FormRequest
 
     public function rules()
     {
+        $id = $this->route('id');
+        $password_required = !empty($this->input('password')) || !empty($this->input('confirmPassword'));
+
         return [
             'name' => 'required|string',
-            'cpf' => 'required|string|unique:users,cpf,' . $this->id,
-            'email' => 'required|string|email|unique:users,email,' . $this->id,
-            'password' => 'required|string',
+            'cpf' => ['required', 'string', new CPF, 'unique:users,cpf,' . $id],
+            'email' => 'required|string|email|unique:users,email,' . $id,
+            'password' => $password_required ? ['required', 'string', new PasswordStrengthRule] : 'nullable|string',
+            'confirmPassword' => $password_required ? ['required', 'string', 'same:password', new PasswordStrengthRule] : 'nullable|string',
         ];
     }
 

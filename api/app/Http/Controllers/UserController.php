@@ -8,6 +8,7 @@ use App\Http\Requests\StoreRequest;
 use App\Http\Requests\UpdateRequest;
 use App\Http\Requests\IndexRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
@@ -184,12 +185,22 @@ class UserController extends Controller
         ])->validate();
 
         $user = User::findOrFail($id);
-
-        $validatedData = $request->validated();
-
-        $user->update($validatedData);
-
+        $data = $request->only(['name', 'email', 'password']);
+        $this->validateAndProcessCpf($request, $data, $id);
+        $user->update($data);
         return response()->json(['message' => 'Usuário atualizado com sucesso!', 'user' => $user], 200);
+    }
+
+    private function validateAndProcessCpf($request, &$data, $id)
+    {
+        if ($request->has('cpf')) {
+            $cpf = preg_replace('/[^0-9]/', '', $request->input('cpf'));
+            $data['cpf'] = $cpf;
+            $existingUser = User::where('cpf', $cpf)->where('id', '!=', $id)->exists();
+            if ($existingUser) {
+                abort(response()->json(['message' => 'O CPF já está em uso por outro usuário.'], 422));
+            }
+        }
     }
 
     /**
