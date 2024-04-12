@@ -5,7 +5,9 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\CPF;
 use App\Rules\PasswordStrengthRule;
-
+/**
+ * @OA\Ignore
+ */
 class StoreRequest extends FormRequest
 {
     public function authorize()

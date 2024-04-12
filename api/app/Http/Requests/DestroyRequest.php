@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+/**
+ * @OA\Ignore
+ */
 class DestroyRequest extends FormRequest
 {
     public function authorize()

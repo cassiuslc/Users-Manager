@@ -15,7 +15,46 @@ use Illuminate\Http\JsonResponse;
 class UserController extends Controller
 {
     /**
-     * Store a newly created resource in storage.
+     * API para operações CRUD de usuários
+     *
+     * Este controlador é responsável pelo gerenciamento dos usuários,
+     * utilizando a estrutura para operações CRUD de usuários
+     *
+     * @return void
+     *
+     * @OA\Tag(name="Users", description="Operações relacionadas à gestão dos usuários")
+     */
+    public function __construct() {
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/users",
+     *     tags={"Users"},
+     *     summary="Store a newly created user",
+     *     description="Store a newly created user in the storage.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="cpf", type="string"),
+     *             @OA\Property(property="email", type="string"),
+     *             @OA\Property(property="password", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="User created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="user", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to create user"
+     *     )
+     * )
      */
     public function store(StoreRequest $request): JsonResponse
     {
@@ -28,7 +67,26 @@ class UserController extends Controller
     }
 
     /**
-     * Display all resource.
+     * @OA\Get(
+     *     path="/api/users",
+     *     tags={"Users"},
+     *     summary="Display all users",
+     *     description="Display all users.",
+     *     @OA\Parameter(
+     *         name="perPage",
+     *         in="query",
+     *         description="Number of users per page",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=10)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of users",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="users", type="array", @OA\Items(type="object"))
+     *         )
+     *     )
+     * )
      */
     public function index(IndexRequest $request): JsonResponse
     {
@@ -38,7 +96,26 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/users/{id}",
+     *     tags={"Users"},
+     *     summary="Display the specified user",
+     *     description="Display the specified user by ID.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the user",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="user", type="object")
+     *         )
+     *     )
+     * )
      */
     public function show(ShowRequest $request): JsonResponse
     {
@@ -48,7 +125,36 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/users/{id}",
+     *     tags={"Users"},
+     *     summary="Update the specified user",
+     *     description="Update the specified user by ID.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the user",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="cpf", type="string"),
+     *             @OA\Property(property="email", type="string"),
+     *             @OA\Property(property="password", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="user", type="object")
+     *         )
+     *     )
+     * )
      */
     public function update(UpdateRequest $request): JsonResponse
     {
@@ -63,7 +169,26 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/users/{id}",
+     *     tags={"Users"},
+     *     summary="Remove the specified user",
+     *     description="Remove the specified user by ID.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the user",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User removed successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     )
+     * )
      */
     public function destroy(DestroyRequest $request): JsonResponse
     {
@@ -74,4 +199,5 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Usuário removido com sucesso!'], 200);
     }
+
 }
