@@ -1,13 +1,21 @@
 <script setup>
-import { Form, Field } from 'vee-validate';
+import axios from 'axios';
 import { ref, defineProps } from 'vue';
+import { cpf as validateCPF } from "cpf-cnpj-validator";
+import { useToast } from "vue-toastification";
 
 const visible = ref(false);
 const visible_2 = ref(false);
-const name = ref('');
-const email = ref('');
-const password = ref('');
-const confirmPassword = ref('');
+const toast = useToast();
+const formData = {
+  name: ref(''),
+  cpf: ref(''),
+  email: ref(''),
+  password: ref(''),
+  confirmPassword: ref('')
+};
+const loading = ref(false);
+const form=ref(null)
 
 const rules = {
   required: value => (value !== null && value !== '') || 'Este campo é obrigatório.',
@@ -16,25 +24,73 @@ const rules = {
     const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     return pattern.test(value) || 'E-mail invalido.'
   },
+  cpf: value => {
+    return validateCPF.isValid(value) || 'CPF invalido.'
+  },
 }
-
 
 function onSubmit(values) {
-    // display form values on success
-    alert('SUCCESS!! :-)\n\n' + JSON.stringify(values, null, 4));
+    loading.value = true;
+    axios.post(`http://localhost/api/users/create`, formData)
+    .then(response => {
+      if (response.status === 200) {
+        let responseData = response.data;
+        toast.success(responseData.message, { timeout: 4000 });
+        reset();
+      } else {
+        toast.error(response.statusText, {timeout: 4000});
+        console.error('Erro ao editar item:', response.statusText);
+      }
+    }).catch(error => {
+      handleHealthCheckError(error.response || error);
+    }).finally(() => {
+      loading.value = false;
+    });
 }
 
+function handleHealthCheckError(response) {
+  if (response.status === 404) {
+    toast.error('API não encontrada', { timeout: 4000 });
+    console.error('API não encontrada:', response.statusText);
+  } else {
+    const errorMessage = response.data && response.data.message ? response.data.message : 'Erro desconhecido ao verificar a saúde da API';
+    toast.error(errorMessage, { timeout: 4000 });
+    console.error('Erro ao verificar a saúde da API:', errorMessage);
+  }
+}
+
+function handleErrors(error) {
+        showError = [];
+        if (error.response && error.response.data && error.response.data.errors) {
+            const errors = error.response.data.errors;
+            for (let field in errors) {
+                showError.push(field);
+            }
+        }
+    }
+
+async function validate() {
+  const { valid } = await form.value.validate();
+  if(valid) onSubmit();
+}
+function reset() {
+  Object.keys(formData).forEach(key => {
+    formData[key].value = '';
+  });
+}
 </script>
 
 <template>
-    <div>
+
+  <div>
+    <v-form ref="form">
       <v-img
         class="mx-auto my-6"
         max-width="80"
         src="/public/register.png"
       ></v-img>
       <v-card
-        class="mx-auto pa-12 pb-8"
+        class="pb-8 mx-auto pa-12"
         elevation="8"
         max-width="448"
         rounded="lg"
@@ -42,10 +98,10 @@ function onSubmit(values) {
       >
         <div class="text-subtitle-1 text-medium-emphasis">Nome</div>
         <v-text-field
-          v-model="name"
+          v-model="formData.name.value"
           density="compact"
+          :disabled="loading"
           placeholder="Nome completo"
-          :error-messages="errorMessages"
           :rules="[rules.required]"
           :mask="`['a-zA-ZÀ-ú]{0,100}''`"
           variant="outlined"
@@ -54,7 +110,9 @@ function onSubmit(values) {
       
         <div class="text-subtitle-1 text-medium-emphasis">E-mail</div>
         <v-text-field
+          v-model="formData.email.value"
           density="compact"
+          :disabled="loading"
           placeholder="Endereço de e-mail"
           prepend-inner-icon="mdi-email-outline"
           variant="outlined"
@@ -64,9 +122,12 @@ function onSubmit(values) {
         <div class="text-subtitle-1 text-medium-emphasis">CPF</div>
         <v-text-field
           density="compact"
+          v-model="formData.cpf.value"
+          :disabled="loading"
           placeholder="___.___.___-__"
           prepend-inner-icon="mdi-account"
           variant="outlined"
+          :rules="[rules.required, rules.cpf]"
           v-mask="'###.###.###-##'"
         ></v-text-field>
   
@@ -74,10 +135,13 @@ function onSubmit(values) {
           Senha
         </div>
         <v-text-field
+          v-model="formData.password.value"
           :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visible ? 'text' : 'password'"
           density="compact"
+          :disabled="loading"
           placeholder="Digite sua senha"
+          :rules="[rules.required]"
           prepend-inner-icon="mdi-lock-outline"
           variant="outlined"
           @click:append-inner="visible = !visible"
@@ -87,9 +151,12 @@ function onSubmit(values) {
           Confirmar Senha
         </div>
         <v-text-field
+          v-model="formData.confirmPassword.value"
           :append-inner-icon="visible_2 ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visible_2 ? 'text' : 'password'"
           density="compact"
+          :disabled="loading"
+          :rules="[rules.required]"
           placeholder="Digite novamente sua senha"
           prepend-inner-icon="mdi-lock-outline"
           variant="outlined"
@@ -97,25 +164,17 @@ function onSubmit(values) {
         ></v-text-field>
   
         <v-btn
+          @click="validate"
           class="mb-8"
+          :loading="loading"
           color="blue"
           size="large"
           variant="tonal"
           block
-        >
-          Registrar
+        >Registrar
         </v-btn>
-  
-        <v-card-text class="text-center">
-          <a
-            class="text-blue text-decoration-none"
-            href="#"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Login <v-icon icon="mdi-chevron-right"></v-icon>
-          </a>
-        </v-card-text>
       </v-card>
-    </div>
+    </v-form>
+  </div>
+
   </template>

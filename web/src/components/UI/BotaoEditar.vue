@@ -14,7 +14,7 @@
       </template>
 
       <v-card prepend-icon="mdi-account" title="Editar Perfil"> 
-      <v-form ref="form" fast-fail @submit="onSubmit">
+      <v-form ref="form" fast-fail>
       <v-skeleton-loader v-if="loading" class="p-3" type="card"></v-skeleton-loader>
       <v-card-text v-else>
           <v-row dense>
