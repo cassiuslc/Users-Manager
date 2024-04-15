@@ -1,6 +1,3 @@
-Forma
-Um exemplo simples de formulário em uma caixa de diálogo.
-
 <template>
   <div class="text-center pa-4">
     <v-dialog
@@ -16,17 +13,14 @@ Um exemplo simples de formulário em uma caixa de diálogo.
         ></v-btn>
       </template>
 
-      <v-card
-        prepend-icon="mdi-account"
-        title="Editar Perfil"
-      > 
+      <v-card prepend-icon="mdi-account" title="Editar Perfil"> 
       <v-skeleton-loader v-if="loading" class="p-3" type="card"></v-skeleton-loader>
         <v-card-text v-else>
           <v-row dense>
             <v-col cols="12" md="12" sm="12">
               <v-text-field
                 label="Nome Completo*"
-                 :error="showError.includes('name')"
+                :error="showError.includes('name')"
                 :disabled="submit"
                 clearable 
                 v-model="data_local.name"
@@ -36,48 +30,17 @@ Um exemplo simples de formulário em uma caixa de diálogo.
 
             <v-col
               cols="12"
-              md="4"
+              md="6"
               sm="6"
             >
                <v-text-field
                 label="CPF*"
                 :error="showError.includes('cpf')"
                 :disabled="submit"
+                clearable 
                 v-mask="'###.###.###-##'"
                 v-model="data_local.cpf"
                 type="text"
-                required
-              ></v-text-field>
-            </v-col>
-
-            <v-col
-              cols="12"
-              md="4"
-              sm="6"
-            >
-              <v-text-field
-                label="Senha"
-                :error="showError.includes('password')"
-                :disabled="submit"
-                clearable 
-                v-model="data_local.password"
-                type="password"
-                required
-              ></v-text-field>
-            </v-col>
-
-            <v-col
-              cols="12"
-              md="4"
-              sm="6"
-            >
-              <v-text-field
-                label="Confirma Senha"
-                :error="showError.includes('confirmPassword')"
-                :disabled="submit"
-                clearable 
-                v-model="data_local.confirmPassword"
-                type="password"
                 required
               ></v-text-field>
             </v-col>
@@ -96,8 +59,43 @@ Um exemplo simples de formulário em uma caixa de diálogo.
                 required
               ></v-text-field>
             </v-col>
-          </v-row>
 
+            <v-col
+              cols="12"
+              md="6"
+              sm="6"
+            >
+              <v-text-field
+                :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+                @click:append-inner="visible = !visible"
+                prepend-inner-icon="mdi-lock-outline"
+                label="Senha"
+                :error="showError.includes('password')"
+                :disabled="submit"
+                v-model="data_local.password"
+                :type="visible ? 'text' : 'password'"
+                required
+              ></v-text-field>
+            </v-col>
+
+            <v-col
+              cols="12"
+              md="6"
+              sm="6"
+            >
+              <v-text-field
+                label="Confirma Senha"
+                :append-inner-icon="visible_2 ? 'mdi-eye-off' : 'mdi-eye'"
+                @click:append-inner="visible_2 = !visible_2"
+                prepend-inner-icon="mdi-lock-outline"
+                :error="showError.includes('confirmPassword')"
+                :disabled="submit"
+                v-model="data_local.confirmPassword"
+                :type="visible_2 ? 'text' : 'password'"
+                required
+              ></v-text-field>
+            </v-col>
+          </v-row>
           <small class="text-caption text-medium-emphasis">*indica campo obrigatório</small>
         </v-card-text>
 
@@ -110,6 +108,14 @@ Um exemplo simples de formulário em uma caixa de diálogo.
             text="Fechar"
             variant="plain"
             @click="dialog = false"
+          ></v-btn>
+
+          <v-btn
+            color="secudary"
+            :loading="submit || loading"
+            text="Recuperar Dados do Perfil"
+            variant="tonal"
+            @click="fetchUserData()"
           ></v-btn>
 
           <v-btn
@@ -129,13 +135,18 @@ Um exemplo simples de formulário em uma caixa de diálogo.
   import axios from 'axios';
   import { defineComponent, PropType } from 'vue'
   import { useToast } from "vue-toastification";
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   export default defineComponent({
     props: {
       id: {
         type: Number as PropType<number>,
         required: true,
-      }
+      },
+      item: {
+        type: Object,
+        required: true,
+      },
     },
     data () {
       return {
@@ -143,6 +154,8 @@ Um exemplo simples de formulário em uma caixa de diálogo.
         dialog: false,
         loading: false,
         submit: false,
+        visible: false,
+        visible_2: false,
         showError : [],
         data_local: {
             user: 0,
@@ -157,7 +170,7 @@ Um exemplo simples de formulário em uma caixa de diálogo.
     watch: {
     dialog(newVal) {
         if (newVal === true) {
-            this.fetchUserData();
+          this.data_local = { ...this.item };
         }else{
             this.resetDataLocal();
         }
@@ -176,23 +189,24 @@ Um exemplo simples de formulário em uma caixa de diálogo.
         };
     },
     fetchUserData() {
-        this.loading = true;
-        fetch(`http://localhost/api/users/${this.id}`)
+      this.loading = true;
+      axios.get(`${apiUrl}/users/${this.id}`)
         .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            console.error('Erro ao buscar user:', response.statusText);
-        }
+          if (response.status === 200) {
+            return response.data;
+          } else {
+            console.error('Erro ao buscar usuário:', response.statusText);
+            throw new Error('Erro ao buscar usuário');
+          }
         })
         .then(userData => {
-        // Faça algo com os dados do usuário, por exemplo, atualize as propriedades do componente
-        this.data_local = userData.user;
-        this.loading = false;
+          // Faça algo com os dados do usuário, por exemplo, atualize as propriedades do componente
+          this.data_local = userData.user;
+          this.loading = false;
         })
         .catch(error => {
-        console.error('Erro ao buscar dados do usuário:', error);
-        this.loading = false;
+          console.error('Erro ao buscar dados do usuário:', error);
+          this.loading = false;
         });
     },
     handleErrors(error) {

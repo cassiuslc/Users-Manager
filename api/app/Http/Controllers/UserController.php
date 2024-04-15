@@ -89,16 +89,28 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function index(Request $request)
+    #ajuste a funcao iddex para seguir boas praticas
+    
+    public function index(IndexRequest $request)
     {
         $perPage = $request->query('perPage', 10);
         $page = $request->query('page', 1);
 
-        $sortBy = $request->query('sortBy','updated_at');
-        $sortOrder = $request->query('sortOrder','desc');
+        $sortBy = $request->query('sortBy', 'updated_at');
+        $sortOrder = $request->query('sortOrder', 'desc');
+        $searchTerm = trim($request->query('search'));
 
         // Inicializa a query de usuários
         $query = User::query();
+
+        // Aplica a pesquisa genérica
+        if (!empty($searchTerm)) {
+            $cpf = preg_replace('/[^0-9]/', '', $searchTerm);
+            $query->where(function ($query) use ($searchTerm,$cpf) {
+                $query->where('name', 'LIKE', "%$searchTerm%")
+                    ->orWhere('email', 'LIKE', "%$searchTerm%");
+            });
+        }
 
         // Aplica a ordenação, se fornecida
         if ($sortBy && $sortOrder) {
@@ -106,11 +118,15 @@ class UserController extends Controller
         }
 
         // Obtém os usuários paginados
-        $users = $query->paginate($perPage, ['*'], 'page', $page);
+        $users = ($perPage == -1)
+        ? $query->paginate($query->count(), ['*'], 'page', $page)
+        : $query->paginate($perPage, ['*'], 'page', $page);
+
 
         // Retorna a resposta JSON com os usuários paginados
         return response()->json(['users' => $users], 200);
     }
+
 
     /**
      * @OA\Get(
@@ -238,5 +254,4 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Usuário removido com sucesso!'], 200);
     }
-
 }

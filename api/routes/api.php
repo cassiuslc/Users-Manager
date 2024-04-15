@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DatabaseCheckController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,6 +28,16 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('refresh', [AuthController::class, 'refresh'])->name('refresh');
     Route::get('me', [AuthController::class, 'me'])->name('me');
+});
+
+
+Route::group([
+    //'middleware' => 'auth:api',
+    'prefix' => 'db'
+], function ($router) {
+    Route::get('/healthcheck', [DatabaseCheckController::class, 'check'])->name('db.status');
+    Route::get('/generate-users', [DatabaseCheckController::class, 'generateUsers'])->name('db.generate');
+    Route::get('/clear-database', [DatabaseCheckController::class, 'clearDatabase'])->name('db.clear');
 });
 
 Route::group([

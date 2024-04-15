@@ -12,12 +12,8 @@
       <div :class="{'hidden': !menuOpen}" class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
         <div class="text-sm lg:flex-grow">
           <MenuItem to="/" label="Início" />
-          <MenuItem to="/salvar" label="Salvar" />
-          <MenuItem to="/editar" label="Editar" />
-          <MenuItem to="/deletar" label="Deletar" />
-          <MenuItem to="/listar" label="Listar" />
-          <MenuItem to="/pesquisar" label="Pesquisar" />
-          <MenuItem to="/swagger" label="Swagger" />
+          <MenuItem to="register" label="Register" />
+          <MenuItem to="http://localhost/api/documentation" label="Swagger" />
         </div>
       </div>
     </nav>
@@ -26,7 +22,6 @@
 
 <script>
 import MenuItem from './MenuItem.vue';
-
 export default {
   components: {
     MenuItem

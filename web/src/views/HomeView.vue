@@ -3,8 +3,7 @@ import TheWelcome from '../components/TheWelcome.vue'
 import PrimaryTable from '../components/PrimaryTable.vue'
 import Toolbars from '../components/UI/Toolbars.vue'
 
-  const apiUrl = 'http://localhost/api/users'
-  
+  const apiUrl = import.meta.env.VITE_API_URL;
   const headers = [
     { title: 'Nome Completo', key: 'name', align: 'start' },
     { title: 'E-mail', key: 'email', align: 'start' },

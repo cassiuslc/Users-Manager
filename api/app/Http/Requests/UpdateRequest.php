@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\CPF;
 use App\Rules\PasswordStrengthRule;
+use App\Rules\UsernameSpecialCharacterRule;
 /**
  * @OA\Ignore
  */
@@ -21,11 +22,11 @@ class UpdateRequest extends FormRequest
         $password_required = !empty($this->input('password')) || !empty($this->input('confirmPassword'));
 
         return [
-            'name' => 'required|string',
+            'name' => ['required', 'string', new UsernameSpecialCharacterRule, 'max:255'],
             'cpf' => ['required', 'string', new CPF, 'unique:users,cpf,' . $id],
-            'email' => 'required|string|email|unique:users,email,' . $id,
-            'password' => $password_required ? ['required', 'string', new PasswordStrengthRule] : 'nullable|string',
-            'confirmPassword' => $password_required ? ['required', 'string', 'same:password', new PasswordStrengthRule] : 'nullable|string',
+            'email' => 'required|string|email|unique:users,max:255,email,' . $id,
+            'password' => $password_required ? ['required','max:100', 'string', new PasswordStrengthRule] : 'nullable|string',
+            'confirmPassword' => $password_required ? ['required','max:100', 'string', 'same:password', new PasswordStrengthRule] : 'nullable|string',
         ];
     }
 

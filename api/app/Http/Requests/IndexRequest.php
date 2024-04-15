@@ -16,9 +16,12 @@ class IndexRequest extends FormRequest
     public function rules()
     {
         return [
-            'perPage' => 'integer|min:1|max:100',
-            'page' => 'integer|min:1|max:100',
-        ];
+            'search' => 'nullable|string|min:1|max:100',
+            'perPage' => 'nullable|integer|min:-1|max:100',
+            'sortOrder' => 'nullable|string|in:asc,desc',
+            'sortBy' => 'nullable|string|min:1|max:100',
+            'page' => 'nullable|integer|min:1|max:100',
+        ];        
     }
 
     public function messages()

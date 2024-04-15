@@ -39,13 +39,14 @@
   import { defineComponent, PropType } from 'vue'
   import { useToast } from "vue-toastification";
   import axios from 'axios';
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   export default defineComponent({
     props: {
       id: {
         type: Number as PropType<number>,
         required: true,
-      }
+      },
     },
     data () {
       return {
@@ -57,7 +58,7 @@
     methods: {
       deleteItem() {
         this.loading = true;
-        axios.delete(`http://localhost/api/users/${this.id}`)
+        axios.delete(`${apiUrl}/users/${this.id}`)
         .then(response => {
           if (response.status === 200) {
             let responseData = response.data;
