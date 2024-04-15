@@ -3,6 +3,7 @@ import axios from 'axios';
 import { ref, defineProps } from 'vue';
 import { cpf as validateCPF } from "cpf-cnpj-validator";
 import { useToast } from "vue-toastification";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const visible = ref(false);
 const visible_2 = ref(false);
@@ -31,15 +32,16 @@ const rules = {
 
 function onSubmit(values) {
     loading.value = true;
-    axios.post(`http://localhost/api/users/create`, formData)
+    axios.post(`${apiUrl}/users/create`, getFormData())
     .then(response => {
-      if (response.status === 200) {
+      if (response.status === 201) {
         let responseData = response.data;
+        console.error('Criado:', response);
         toast.success(responseData.message, { timeout: 4000 });
         reset();
       } else {
         toast.error(response.statusText, {timeout: 4000});
-        console.error('Erro ao editar item:', response.statusText);
+        console.error('Erro ao criar item:', response.statusText);
       }
     }).catch(error => {
       handleHealthCheckError(error.response || error);
@@ -47,6 +49,17 @@ function onSubmit(values) {
       loading.value = false;
     });
 }
+
+function getFormData() {
+  return {
+    name: formData.name.value,
+    cpf: formData.cpf.value,
+    email: formData.email.value,
+    password: formData.password.value,
+    confirmPassword: formData.confirmPassword.value
+  };
+}
+
 
 function handleHealthCheckError(response) {
   if (response.status === 404) {
@@ -74,9 +87,7 @@ async function validate() {
   if(valid) onSubmit();
 }
 function reset() {
-  Object.keys(formData).forEach(key => {
-    formData[key].value = '';
-  });
+  form.value.reset();
 }
 </script>
 
@@ -87,7 +98,7 @@ function reset() {
       <v-img
         class="mx-auto my-6"
         max-width="80"
-        src="/public/register.png"
+        src="/register.png"
       ></v-img>
       <v-card
         class="pb-8 mx-auto pa-12"

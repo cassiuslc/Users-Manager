@@ -193,7 +193,7 @@ class UserController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/users/create",
+     *     path="/api/users/create",
      *     tags={"Users"},
      *     summary="Create a new user",
      *     description="Create a new user.",

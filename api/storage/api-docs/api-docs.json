@@ -465,14 +465,14 @@
                 ]
             }
         },
-        "/users/create": {
+        "/api/users/create": {
             "post": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Create a new user",
                 "description": "Create a new user.",
-                "operationId": "9ebfae2374ece31a0781cf2c3b59491e",
+                "operationId": "2e98eb12e79426f9ce5924c5a5686e6a",
                 "requestBody": {
                     "required": true,
                     "content": {
