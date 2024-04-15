@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use App\Rules\CPF;
 
 class UserController extends Controller
 {
@@ -228,6 +229,10 @@ class UserController extends Controller
         $data = $request->only(['name', 'email', 'password']);
         $cpf = preg_replace('/[^0-9]/', '', $request->input('cpf'));
         $data['cpf'] = $cpf;
+
+        Validator::make(["cpf" => $cpf], [
+            'cpf' => ['required', 'string', new CPF, 'unique:users,cpf']
+        ])->validate();
 
         $data['password'] = Hash::make($data['password']);
         $user = User::create($data);

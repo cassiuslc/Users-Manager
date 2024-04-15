@@ -33,6 +33,7 @@ Este repositório apresenta a solução para um teste de Desenvolvedor Full Stac
 
 ## Demonstração
 
+https://github.com/cassiuslc/Users-Manager/assets/51304545/174bf1f6-0e97-4bac-95b3-11cb27168018
 
 ## Instalação
 
