@@ -18,12 +18,12 @@ class RegisterRequest extends FormRequest
 
     public function rules()
     {
-        return [
+       return [
             'name' => ['required', 'string', new UsernameSpecialCharacterRule, 'max:255'],
-            'cpf' => ['required', 'string', new CPF, 'unique:users,cpf,'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'],
-            'password' => ['required','max:100', 'string', new PasswordStrengthRule],
-            'confirmPassword' =>  ['required','max:100', 'string', 'same:password', new PasswordStrengthRule],
+            'cpf' => ['required', 'string', new CPF, 'unique:users,cpf'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'max:100', new PasswordStrengthRule],
+            'confirmPassword' => ['required', 'string', 'max:100', 'same:password', new PasswordStrengthRule],
         ];
     }
 

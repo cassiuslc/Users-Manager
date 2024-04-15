@@ -11,6 +11,7 @@ use App\Http\Requests\RegisterRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -168,7 +169,11 @@ class UserController extends Controller
         ])->validate();
 
         $user = User::findOrFail($id);
-        $data = $request->only(['name', 'email', 'password']);
+        $data = $request->only(['name', 'email']);
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->input('password'));
+        }
         $this->validateAndProcessCpf($request, $data, $id);
         $user->update($data);
         return response()->json(['message' => 'Usuário atualizado com sucesso!', 'user' => $user], 200);
@@ -218,9 +223,13 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function register(RegisterRequest $request, $id): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $data = $request->only(['name', 'cpf', 'email', 'password']);
+        $data = $request->only(['name', 'email', 'password']);
+        $cpf = preg_replace('/[^0-9]/', '', $request->input('cpf'));
+        $data['cpf'] = $cpf;
+
+        $data['password'] = Hash::make($data['password']);
         $user = User::create($data);
         if ($user) {
             return response()->json(['message' => 'Usuário criado com sucesso!', 'user' => $user], 201);
