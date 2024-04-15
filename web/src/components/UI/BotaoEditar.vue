@@ -14,14 +14,16 @@
       </template>
 
       <v-card prepend-icon="mdi-account" title="Editar Perfil"> 
+      <v-form ref="form" fast-fail @submit="onSubmit">
       <v-skeleton-loader v-if="loading" class="p-3" type="card"></v-skeleton-loader>
-        <v-card-text v-else>
+      <v-card-text v-else>
           <v-row dense>
             <v-col cols="12" md="12" sm="12">
               <v-text-field
                 label="Nome Completo*"
                 :error="showError.includes('name')"
                 :disabled="submit"
+                :rules="[rules.required]"
                 clearable 
                 v-model="data_local.name"
                 required
@@ -37,7 +39,8 @@
                 label="CPF*"
                 :error="showError.includes('cpf')"
                 :disabled="submit"
-                clearable 
+                clearable
+                :rules="[rules.required,rules.cpf]"
                 v-mask="'###.###.###-##'"
                 v-model="data_local.cpf"
                 type="text"
@@ -55,6 +58,7 @@
                 :error="showError.includes('email')"
                 :disabled="submit"
                 clearable 
+                :rules="[rules.required, rules.email]"
                 v-model="data_local.email"
                 required
               ></v-text-field>
@@ -120,12 +124,13 @@
 
           <v-btn
             color="primary"
+            @click="validate"
             :loading="submit || loading"
             text="Salvar"
             variant="tonal"
-            @click="updateItem()"
           ></v-btn>
         </v-card-actions>
+        </v-form>
       </v-card>
     </v-dialog>
   </div>
@@ -135,6 +140,8 @@
   import axios from 'axios';
   import { defineComponent, PropType } from 'vue'
   import { useToast } from "vue-toastification";
+  import { cpf as validateCPF } from "cpf-cnpj-validator";
+
   const apiUrl = import.meta.env.VITE_API_URL;
 
   export default defineComponent({
@@ -157,6 +164,16 @@
         visible: false,
         visible_2: false,
         showError : [],
+        rules:{
+          required: value => (value !== null && value !== '') || 'Este campo é obrigatório.',
+          email: value => {
+            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            return pattern.test(value) || 'E-mail invalido.'
+          },
+          cpf: value => {
+            return validateCPF.isValid(value) || 'CPF invalido.'
+          },
+        },
         data_local: {
             user: 0,
             name: "",
@@ -177,6 +194,10 @@
         },
     },
     methods: {
+     async validate () {
+        const { valid } = await this.$refs.form.validate()
+        if (valid) this.updateItem();
+      },
      resetDataLocal() {
         this.data_local = {
         user: 0,
