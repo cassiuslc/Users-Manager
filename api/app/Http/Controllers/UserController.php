@@ -90,7 +90,7 @@ class UserController extends Controller
      * )
      */
     #ajuste a funcao iddex para seguir boas praticas
-    
+
     public function index(IndexRequest $request)
     {
         $perPage = $request->query('perPage', 10);
@@ -105,12 +105,20 @@ class UserController extends Controller
 
         // Aplica a pesquisa genérica
         if (!empty($searchTerm)) {
-            $cpf = preg_replace('/[^0-9]/', '', $searchTerm);
-            $query->where(function ($query) use ($searchTerm,$cpf) {
-                $query->where('name', 'LIKE', "%$searchTerm%")
-                    ->orWhere('email', 'LIKE', "%$searchTerm%");
-            });
+            $value = preg_replace('/[^a-zA-Z0-9]/', '', $searchTerm);
+            if (is_numeric($value)) {
+                $query->where(function ($query) use ($value) {
+                    $query->where('id', 'LIKE', "%$value%")
+                        ->orWhere('cpf', 'LIKE', "%$value%");
+                });
+            } else {
+                $query->where(function ($query) use ($searchTerm) {
+                    $query->where('name', 'LIKE', "%$searchTerm%")
+                        ->orWhere('email', 'LIKE', "%$searchTerm%");
+                });
+            }
         }
+
 
         // Aplica a ordenação, se fornecida
         if ($sortBy && $sortOrder) {

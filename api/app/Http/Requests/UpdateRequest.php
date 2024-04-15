@@ -24,7 +24,7 @@ class UpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string', new UsernameSpecialCharacterRule, 'max:255'],
             'cpf' => ['required', 'string', new CPF, 'unique:users,cpf,' . $id],
-            'email' => 'required|string|email|unique:users,max:255,email,' . $id,
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $id],
             'password' => $password_required ? ['required','max:100', 'string', new PasswordStrengthRule] : 'nullable|string',
             'confirmPassword' => $password_required ? ['required','max:100', 'string', 'same:password', new PasswordStrengthRule] : 'nullable|string',
         ];

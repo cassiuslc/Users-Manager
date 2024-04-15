@@ -14,7 +14,7 @@ class UsernameSpecialCharacterRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (preg_match('/[^a-zA-Z0-9_]/', $value) || preg_match('/["\']/', $value)) {
+        if (preg_match('/[^a-zA-Z0-9\'\s]/', $value)) {
             $fail('O nome de usuário não pode conter caracteres especiais.');
         }
     }
