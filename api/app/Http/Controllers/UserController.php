@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Http\Requests\StoreRequest;
 use App\Http\Requests\UpdateRequest;
 use App\Http\Requests\IndexRequest;
+use App\Http\Requests\RegisterRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
@@ -24,46 +25,6 @@ class UserController extends Controller
      * @OA\Tag(name="Users", description="Operações relacionadas à gestão dos usuários")
      */
     public function __construct() {
-    }
-
-    /**
-     * @OA\Post(
-     *     path="/api/users",
-     *     tags={"Users"},
-     *     security={{"bearerAuth": {}}},
-     *     summary="Store a newly created user",
-     *     description="Store a newly created user in the storage.",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="name", type="string"),
-     *             @OA\Property(property="cpf", type="string"),
-     *             @OA\Property(property="email", type="string"),
-     *             @OA\Property(property="password", type="string")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="User created successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string"),
-     *             @OA\Property(property="user", type="object")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Failed to create user"
-     *     )
-     * )
-     */
-    public function store(StoreRequest $request): JsonResponse
-    {
-        $userData = $request->only(['name', 'cpf', 'email', 'password']);
-        $user = User::create($userData);
-        if ($user) {
-            return response()->json(['message' => 'Usuário criado com sucesso!', 'user' => $user], 201);
-        }
-        return response()->json(['message' => 'Falha ao criar usuário.'], 500);
     }
 
     /**
@@ -89,8 +50,6 @@ class UserController extends Controller
      *     )
      * )
      */
-    #ajuste a funcao iddex para seguir boas praticas
-
     public function index(IndexRequest $request)
     {
         $perPage = $request->query('perPage', 10);
@@ -225,6 +184,48 @@ class UserController extends Controller
                 abort(response()->json(['message' => 'O CPF já está em uso por outro usuário.'], 422));
             }
         }
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/users/create",
+     *     tags={"Users"},
+     *     summary="Create a new user",
+     *     description="Create a new user.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="cpf", type="string"),
+     *             @OA\Property(property="email", type="string"),
+     *             @OA\Property(property="password", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="user", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to create user",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     )
+     * )
+     */
+    public function register(RegisterRequest $request, $id): JsonResponse
+    {
+        $data = $request->only(['name', 'cpf', 'email', 'password']);
+        $user = User::create($data);
+        if ($user) {
+            return response()->json(['message' => 'Usuário criado com sucesso!', 'user' => $user], 201);
+        }
+        return response()->json(['message' => 'Falha ao criar usuário.'], 500);
     }
 
     /**
