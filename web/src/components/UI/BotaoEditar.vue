@@ -9,6 +9,7 @@
           class="text-gray-600 rounded text-none font-weight-regular hover:text-yellow-600"
           prepend-icon="mdi-account"
           text="Editar"
+          id="btn-editar"
           v-bind="activatorProps"
         ></v-btn>
       </template>
@@ -20,6 +21,7 @@
           <v-row dense>
             <v-col cols="12" md="12" sm="12">
               <v-text-field
+                id="name"
                 label="Nome Completo*"
                 :error="showError.includes('name')"
                 :disabled="submit"
@@ -37,6 +39,7 @@
             >
                <v-text-field
                 label="CPF*"
+                id="cpf"
                 :error="showError.includes('cpf')"
                 :disabled="submit"
                 clearable
@@ -55,6 +58,7 @@
             >
             <v-text-field
                 label="Email*"
+                id="email"
                 :error="showError.includes('email')"
                 :disabled="submit"
                 clearable 
@@ -70,6 +74,7 @@
               sm="6"
             >
               <v-text-field
+                id="password"
                 :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
                 @click:append-inner="visible = !visible"
                 prepend-inner-icon="mdi-lock-outline"
@@ -88,6 +93,7 @@
               sm="6"
             >
               <v-text-field
+                id="confirmPassword"
                 label="Confirma Senha"
                 :append-inner-icon="visible_2 ? 'mdi-eye-off' : 'mdi-eye'"
                 @click:append-inner="visible_2 = !visible_2"
@@ -110,12 +116,14 @@
 
           <v-btn
             text="Fechar"
+            id="btn-fechar"
             variant="plain"
             @click="dialog = false"
           ></v-btn>
 
           <v-btn
             color="secudary"
+            id="btn-recuperar"
             :loading="submit || loading"
             text="Recuperar Dados do Perfil"
             variant="tonal"
@@ -125,6 +133,7 @@
           <v-btn
             color="primary"
             @click="validate"
+            id="btn-salvar"
             :loading="submit || loading"
             text="Salvar"
             variant="tonal"

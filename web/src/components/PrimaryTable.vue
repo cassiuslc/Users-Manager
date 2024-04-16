@@ -1,12 +1,13 @@
 <template>
     <div>
 
-        <v-card>
+        <v-card id="primary-table">
 
             <HeaderTable :key="componentKey" @statusChanged="handleStatusChanged" :title="title"></HeaderTable>
 
             <v-sheet class="d-flex flex-wrap p-4">
             <v-text-field
+                id="search"
                 prepend-inner-icon="mdi-account"
                 v-model="search"
                 label="Buscar usuários"
@@ -18,6 +19,7 @@
             ></v-text-field>
 
             <v-btn
+            id="search-btn"
             :loading="loading"
             :disabled="!status"
             @click="searchItems"
@@ -36,6 +38,7 @@
             <v-alert v-else-if="totalItems  === 0 && empty === true && status === true"
                     closable
                     class="m-5"
+                    id="alert-empty"
                     type="warning"
                     variant="tonal"
                     icon="mdi-alert"
@@ -45,6 +48,7 @@
             <div>
                 <v-btn class="mt-3" variant="outlined"
                 :loading="loading"
+                id="alert-empty-btn"
                 @click="searchItems"
                 >
                     Atualizar
@@ -55,6 +59,7 @@
                     closable
                     class="m-5"
                     type="error"
+                    id="alert-error"
                     variant="tonal"
                     icon="mdi-alert"
                     title="Erro ao tentar consultar a API"
@@ -62,6 +67,7 @@
             ><div>
                 <v-btn class="mt-3" variant="outlined"
                 :loading="loading"
+                id="alert-error-btn"
                 @click="refreshLoad"
                 >
                     Atualizar
@@ -73,6 +79,7 @@
             </v-alert>
             <v-data-table-server v-else
                 v-model="selected"
+                id="data-table"
                 :headers="headers"
                 :items="serverItems"
                 :items-length="totalItems"
@@ -95,8 +102,8 @@
             
             <template v-slot:item.action="{ item }">
                 <div class="flex items-center justify-center">
-                    <BotaoDelete @itemDeleted="handleItemDeleted" :item="item" :id="item.id" />
-                    <BotaoEditar @itemEdited="handleItemEdited" :item="item" :id="item.id" />
+                    <BotaoDelete @itemDeleted="handleItemDeleted" class="click-delete" :item="item" :id="item.id" />
+                    <BotaoEditar @itemEdited="handleItemEdited" class="click-edit" :item="item" :id="item.id" />
                 </div>
             </template>
             </v-data-table-server>
