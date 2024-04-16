@@ -44,6 +44,7 @@ https://github.com/cassiuslc/Users-Manager/assets/51304545/7a0e65e4-9854-4c88-87
 cd web
 ```
 2. Execulte o cyspress
+   
 Teste não visual:
 ```bash
 npx cypress run
