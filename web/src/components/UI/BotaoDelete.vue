@@ -10,11 +10,13 @@
           class="text-gray-600 rounded text-none font-weight-regular hover:text-red-500"
           prepend-icon="mdi-delete"
           text="Deletar"
+          id="btn-deletar"
           v-bind="activatorProps"
         ></v-btn>
         </template>
   
         <v-card
+          id="dialog-delete"
           prepend-icon="mdi-delete"
           text="Tem certeza de que deseja apagar este item?"
           :title="'Exclusão do item ID: ' + id"
@@ -22,11 +24,11 @@
           <template v-slot:actions>
             <v-spacer></v-spacer>
   
-            <v-btn @click="dialog = false">
+            <v-btn id="btn-voltar-delete" @click="dialog = false">
               Voltar
             </v-btn>
   
-            <v-btn @click="deleteItem()" :loading="loading">
+            <v-btn id="btn-confirmar-delete" @click="deleteItem()" :loading="loading">
               Confirmar
             </v-btn>
           </template>

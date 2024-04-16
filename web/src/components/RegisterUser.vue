@@ -93,8 +93,8 @@ function reset() {
 
 <template>
 
-  <div>
-    <v-form ref="form">
+  <div id="form-register-container">
+    <v-form id="form-register" ref="form">
       <v-img
         class="mx-auto my-6"
         max-width="80"
@@ -109,6 +109,7 @@ function reset() {
       >
         <div class="text-subtitle-1 text-medium-emphasis">Nome</div>
         <v-text-field
+          id="name"
           v-model="formData.name.value"
           density="compact"
           :disabled="loading"
@@ -121,6 +122,7 @@ function reset() {
       
         <div class="text-subtitle-1 text-medium-emphasis">E-mail</div>
         <v-text-field
+          id="email"
           v-model="formData.email.value"
           density="compact"
           :disabled="loading"
@@ -132,6 +134,7 @@ function reset() {
 
         <div class="text-subtitle-1 text-medium-emphasis">CPF</div>
         <v-text-field
+          id="cpf"
           density="compact"
           v-model="formData.cpf.value"
           :disabled="loading"
@@ -146,6 +149,7 @@ function reset() {
           Senha
         </div>
         <v-text-field
+          id="password"
           v-model="formData.password.value"
           :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visible ? 'text' : 'password'"
@@ -162,6 +166,7 @@ function reset() {
           Confirmar Senha
         </div>
         <v-text-field
+          id="confirmpassword"
           v-model="formData.confirmPassword.value"
           :append-inner-icon="visible_2 ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visible_2 ? 'text' : 'password'"
@@ -177,6 +182,7 @@ function reset() {
         <v-btn
           @click="validate"
           class="mb-8"
+          id="btn-submit"
           :loading="loading"
           color="blue"
           size="large"
