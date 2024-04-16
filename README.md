@@ -33,8 +33,26 @@ Este repositório apresenta a solução para um teste de Desenvolvedor Full Stac
 
 ## Demonstração
 
-https://github.com/cassiuslc/Users-Manager/assets/51304545/174bf1f6-0e97-4bac-95b3-11cb27168018
+https://github.com/cassiuslc/Users-Manager/assets/51304545/d590a044-c9f7-4b6d-bf2a-687f036276dd
 
+## Testes Automatizados com Cypress (Instale o projeto primeiro)
+
+https://github.com/cassiuslc/Users-Manager/assets/51304545/7a0e65e4-9854-4c88-873e-0e640587ca64
+
+1. Acesse a pasta web do projeto
+```bash
+cd web
+```
+2. Execulte o cyspress
+   
+Teste não visual:
+```bash
+npx cypress run
+```
+Teste visual:
+```bash
+npx cypress open
+```
 ## Instalação
 
 Siga os passos abaixo para configurar e executar o projeto:
